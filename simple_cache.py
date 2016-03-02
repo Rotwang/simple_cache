@@ -36,9 +36,13 @@ except NameError:
 #
 
 
+def cons_lock_filename(orig_filename):
+    """Create file name for the lock file."""
+    return ".".join([orig_filename, "lock"])
+
 def write_cache(filename, cache):
     """Write the cache dictionary to disk."""
-    lock = filelock.FileLock(filename)
+    lock = filelock.FileLock(cons_lock_filename(filename))
     with lock.acquire(timeout=10):
         with open(filename, "w+b") as file:
             pickle.dump(cache, file)
@@ -46,7 +50,7 @@ def write_cache(filename, cache):
 
 def read_cache(filename):
     """Read a cache dictionary from disk."""
-    lock = filelock.FileLock(filename)
+    lock = filelock.FileLock(cons_lock_filename(filename))
     try:
         with lock.acquire(timeout=10):
             with open(filename, "r+b") as file:
