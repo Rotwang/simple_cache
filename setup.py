@@ -17,5 +17,6 @@ setup(name='simple_cache',
       url='https://github.com/barisumog/simple_cache',
       py_modules=['simple_cache', 'test_simple_cache'],
       data_files=[('', ['README.rst'])],
+      install_requires=['filelock'],
       license="GPLv3"
      )
