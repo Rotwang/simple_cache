@@ -40,6 +40,7 @@ def cons_lock_filename(orig_filename):
     """Create file name for the lock file."""
     return ".".join([orig_filename, "lock"])
 
+
 def write_cache(filename, cache):
     """Write the cache dictionary to disk."""
     lock = filelock.FileLock(cons_lock_filename(filename))
