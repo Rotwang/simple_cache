@@ -20,6 +20,7 @@
 #
 
 
+import filelock
 import pickle
 import time
 from functools import wraps
@@ -37,19 +38,25 @@ except NameError:
 
 def write_cache(filename, cache):
     """Write the cache dictionary to disk."""
-    with open(filename, "w+b") as file:
-        pickle.dump(cache, file)
+    lock = filelock.FileLock(filename)
+    with lock.acquire(timeout=10):
+        with open(filename, "w+b") as file:
+            pickle.dump(cache, file)
 
 
 def read_cache(filename):
     """Read a cache dictionary from disk."""
+    lock = filelock.FileLock(filename)
     try:
-        with open(filename, "r+b") as file:
-            cache = pickle.load(file)
+        with lock.acquire(timeout=10):
+            with open(filename, "r+b") as file:
+                cache = pickle.load(file)
     except file_error as e:
         if file_error is IOError:
             if e.errno != ENOENT:
                 raise
+        cache = {}
+    except filelock.Timeout:
         cache = {}
     return cache
 
